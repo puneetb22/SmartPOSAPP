@@ -49,6 +49,7 @@ export const businessConfig = pgTable("business_config", {
   address: text("address"),
   phone: varchar("phone"),
   email: varchar("email"),
+  userId: varchar("user_id").references(() => users.id),
   isConfigured: boolean("is_configured").notNull().default(false),
   factoryResetProtection: boolean("factory_reset_protection").notNull().default(true),
   defaultLanguage: varchar("default_language", { enum: ["en", "hi", "mr"] }).notNull().default("en"),

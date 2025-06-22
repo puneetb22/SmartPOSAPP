@@ -39,18 +39,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/business-config', async (req: any, res) => {
     try {
       const validatedData = insertBusinessConfigSchema.parse(req.body);
-      // Add default user ID for offline mode and mark as configured
+      
+      // Mark as configured for immediate use
       const configWithDefaults = {
         ...validatedData,
-        userId: 'offline_user',
         isConfigured: true,
         factoryResetProtection: true
       };
+      
       const config = await storage.createBusinessConfig(configWithDefaults);
       res.json(config);
     } catch (error) {
       console.error("Error creating business config:", error);
-      res.status(500).json({ message: "Failed to create business configuration" });
+      res.status(500).json({ 
+        message: "Failed to create business configuration",
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
     }
   });
 
