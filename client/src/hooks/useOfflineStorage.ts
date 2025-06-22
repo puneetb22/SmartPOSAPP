@@ -13,6 +13,19 @@ export function useOfflineStorage() {
     isOnline: navigator.onLine,
   });
 
+  // Initialize demo data if not exists
+  useEffect(() => {
+    if (!localStorage.getItem('pos_demo_initialized')) {
+      const demoProducts = [
+        { id: 1, name: 'Demo Product 1', price: 100, stock: 50 },
+        { id: 2, name: 'Demo Product 2', price: 250, stock: 30 },
+        { id: 3, name: 'Demo Product 3', price: 150, stock: 25 }
+      ];
+      localStorage.setItem('pos_demo_products', JSON.stringify(demoProducts));
+      localStorage.setItem('pos_demo_initialized', 'true');
+    }
+  }, []);
+
   useEffect(() => {
     const handleOnline = () => {
       setSyncStatus(prev => ({ ...prev, isOnline: true }));

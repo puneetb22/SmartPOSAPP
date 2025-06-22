@@ -54,7 +54,26 @@ export function BusinessModeProvider({ children }: BusinessModeProviderProps) {
         }
       }
       
-      return null;
+      // Return default configuration for immediate POS access
+      const defaultConfig = {
+        id: 'default',
+        businessType: 'restaurant',
+        businessName: 'Demo Store',
+        gstin: '',
+        address: 'Setup your address in Settings',
+        phone: '0000000000',
+        email: '',
+        userId: 'demo_user',
+        isConfigured: true,
+        factoryResetProtection: false,
+        defaultLanguage: 'en',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Save default config to localStorage
+      localStorage.setItem('pos_business_config', JSON.stringify(defaultConfig));
+      return defaultConfig;
     },
   });
 
