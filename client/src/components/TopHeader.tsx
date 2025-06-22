@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useI18n } from '@/hooks/useI18n';
-import { Menu, Plus, Tv, Bell } from 'lucide-react';
+import { useOffline } from '@/contexts/OfflineContext';
+import { Menu, Plus, Tv, Bell, Clock, Calendar, User, LogOut } from 'lucide-react';
+import { SyncStatus } from '@/components/SyncStatus';
 import { Link } from 'wouter';
 
 interface TopHeaderProps {
@@ -12,6 +14,7 @@ interface TopHeaderProps {
 
 export function TopHeader({ title, onMenuToggle }: TopHeaderProps) {
   const { t } = useI18n();
+  const { user, logout } = useOffline();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute

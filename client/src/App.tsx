@@ -3,11 +3,11 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuth } from "@/hooks/useAuth";
+import { OfflineProvider, useOffline } from "@/contexts/OfflineContext";
 import { BusinessModeProvider } from "@/contexts/BusinessModeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import NotFound from "@/pages/not-found";
-import Landing from "@/pages/Landing";
+import OfflineLogin from "@/pages/OfflineLogin";
 import Dashboard from "@/pages/Dashboard";
 import BusinessSetup from "@/pages/BusinessSetup";
 import Sales from "@/pages/Sales";
@@ -17,7 +17,7 @@ import Settings from "@/pages/Settings";
 import { useBusinessMode } from "@/contexts/BusinessModeContext";
 
 function AppRoutes() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useOffline();
   const { isConfigured, isLoading: businessLoading } = useBusinessMode();
 
   if (isLoading || businessLoading) {
@@ -34,12 +34,13 @@ function AppRoutes() {
   return (
     <Switch>
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <Route path="/" component={OfflineLogin} />
       ) : !isConfigured ? (
         <Route path="/" component={BusinessSetup} />
       ) : (
         <>
-          <Route path="/" component={Dashboard} />
+          <Route path="/" component={Sales} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/sales" component={Sales} />
           <Route path="/inventory" component={Inventory} />
           <Route path="/reports" component={Reports} />
@@ -54,14 +55,16 @@ function AppRoutes() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <BusinessModeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <AppRoutes />
-          </TooltipProvider>
-        </BusinessModeProvider>
-      </LanguageProvider>
+      <TooltipProvider>
+        <LanguageProvider>
+          <OfflineProvider>
+            <BusinessModeProvider>
+              <AppRoutes />
+              <Toaster />
+            </BusinessModeProvider>
+          </OfflineProvider>
+        </LanguageProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }

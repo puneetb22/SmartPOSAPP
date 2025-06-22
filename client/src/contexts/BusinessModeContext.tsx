@@ -32,6 +32,19 @@ export function BusinessModeProvider({ children }: BusinessModeProviderProps) {
   const { data: businessConfig, isLoading } = useQuery({
     queryKey: ['/api/business-config'],
     retry: false,
+    queryFn: async () => {
+      try {
+        // Try to fetch from server first
+        const response = await fetch('/api/business-config');
+        if (response.ok) {
+          return await response.json();
+        }
+      } catch (error) {
+        console.log('Server unavailable, using offline data');
+      }
+      // Fallback to offline storage
+      return offlineStorage.getBusinessConfig();
+    },
   });
 
   useEffect(() => {
