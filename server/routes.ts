@@ -51,10 +51,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(config);
     } catch (error) {
       console.error("Error creating business config:", error);
-      res.status(500).json({ 
-        message: "Failed to create business configuration",
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-      });
+      
+      if (error.name === 'ZodError') {
+        res.status(400).json({ 
+          message: "Validation failed",
+          errors: error.errors
+        });
+      } else {
+        res.status(500).json({ 
+          message: "Failed to create business configuration",
+          error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        });
+      }
     }
   });
 

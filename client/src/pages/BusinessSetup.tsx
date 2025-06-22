@@ -18,10 +18,10 @@ import { Store, Utensils, Stethoscope, Wheat } from 'lucide-react';
 const businessConfigSchema = z.object({
   businessType: z.enum(['restaurant', 'pharmacy', 'agri']),
   businessName: z.string().min(1, 'Business name is required'),
-  gstin: z.string().optional(),
+  gstin: z.string().optional().or(z.literal('')),
   address: z.string().min(1, 'Address is required'),
   phone: z.string().min(10, 'Valid phone number is required'),
-  email: z.string().email('Valid email is required').optional(),
+  email: z.string().email('Valid email is required').optional().or(z.literal('')),
 });
 
 type BusinessConfigForm = z.infer<typeof businessConfigSchema>;

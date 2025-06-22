@@ -114,6 +114,7 @@ This project can be run locally in VS Code. See `SETUP.md` for detailed instruct
 Changelog:
 - June 22, 2025. Initial setup and authentication debugging
 - June 22, 2025. Fixed business setup flow and local development guide
+- June 22, 2025. Resolved database schema issues and business config creation errors
 ```
 
 ## User Preferences
