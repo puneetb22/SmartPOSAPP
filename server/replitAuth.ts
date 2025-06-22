@@ -67,12 +67,21 @@ async function upsertUser(
 }
 
 export async function setupAuth(app: Express) {
-  app.set("trust proxy", 1);
-  app.use(getSession());
-  app.use(passport.initialize());
-  app.use(passport.session());
+  try {
+    if (!process.env.REPL_ID) {
+      throw new Error("Environment variable REPL_ID not provided");
+    }
 
-  const config = await getOidcConfig();
+    if (!process.env.SESSION_SECRET) {
+      throw new Error("Environment variable SESSION_SECRET not provided");
+    }
+
+    app.set("trust proxy", 1);
+    app.use(getSession());
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    const config = await getOidcConfig();
 
   const verify: VerifyFunction = async (
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
@@ -125,6 +134,10 @@ export async function setupAuth(app: Express) {
       );
     });
   });
+  } catch (error) {
+    console.error('Failed to setup authentication:', error);
+    throw error;
+  }
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
