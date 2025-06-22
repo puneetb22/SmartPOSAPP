@@ -26,7 +26,7 @@ import {
   type InventoryMovement,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, like, and, lt, sql, sum } from "drizzle-orm";
+import { eq, desc, like, and, lt, sql, sum, lte } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (required for Replit Auth)
@@ -181,7 +181,7 @@ export class DatabaseStorage implements IStorage {
       const result = await db
         .select()
         .from(products)
-        .where(lte(products.stock, products.minStock));
+        .where(lte(sql`COALESCE((SELECT SUM(quantity) FROM stock_batches WHERE product_id = products.id), 0)`, products.minStockLevel));
       
       return result;
     } catch (error) {
