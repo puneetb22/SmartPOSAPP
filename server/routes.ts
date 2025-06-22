@@ -36,17 +36,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/business-config', isAuthenticated, async (req: any, res) => {
+  app.post('/api/business-config', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (user?.role !== 'admin') {
-        return res.status(403).json({ message: "Only administrators can configure business settings" });
-      }
-
       const validatedData = insertBusinessConfigSchema.parse(req.body);
-      const config = await storage.createBusinessConfig(validatedData);
+      // Add default user ID for offline mode
+      const configWithDefaults = {
+        ...validatedData,
+        userId: 'offline_user'
+      };
+      const config = await storage.createBusinessConfig(configWithDefaults);
       res.json(config);
     } catch (error) {
       console.error("Error creating business config:", error);
@@ -54,15 +52,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/business-config/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/business-config/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (user?.role !== 'admin') {
-        return res.status(403).json({ message: "Only administrators can modify business settings" });
-      }
-
       const { id } = req.params;
       const validatedData = insertBusinessConfigSchema.partial().parse(req.body);
       const config = await storage.updateBusinessConfig(parseInt(id), validatedData);
