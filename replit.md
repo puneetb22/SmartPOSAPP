@@ -116,6 +116,10 @@ Changelog:
 - June 22, 2025. Fixed business setup flow and local development guide
 - June 22, 2025. Resolved database schema issues and business config creation errors
 - June 22, 2025. Implemented complete POS sales interface with cart functionality
+- June 22, 2025. Added complete inventory management with product CRUD, stock management, and alerts
+- June 22, 2025. Added comprehensive customer management with analytics and contact details  
+- June 22, 2025. Created database migration script for schema updates on internal Docker database
+- June 22, 2025. Fixed database schema queries and completed API routes for inventory and customers
 ```
 
 ## User Preferences

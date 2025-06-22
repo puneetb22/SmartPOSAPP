@@ -177,15 +177,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLowStockProducts(): Promise<Product[]> {
-    const result = await db
-      .select()
-      .from(products)
-      .leftJoin(stockBatches, eq(products.id, stockBatches.productId))
-      .where(eq(products.isActive, true))
-      .groupBy(products.id)
-      .having(sql`COALESCE(SUM(${stockBatches.quantity}), 0) <= ${products.minStockLevel}`);
-    
-    return result.map(item => item.products);
+    try {
+      const result = await db
+        .select()
+        .from(products)
+        .where(sql`${products.stock} <= ${products.minStock}`);
+      
+      return result;
+    } catch (error) {
+      console.error('Error fetching low stock products:', error);
+      throw new Error('Failed to fetch low stock products');
+    }
   }
 
   // Category operations

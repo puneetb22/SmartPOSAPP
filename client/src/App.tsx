@@ -12,6 +12,7 @@ import Dashboard from "@/pages/Dashboard";
 import BusinessSetup from "@/pages/BusinessSetup";
 import Sales from "@/pages/Sales";
 import Inventory from "@/pages/Inventory";
+import Customers from "@/pages/Customers";
 import Reports from "@/pages/Reports";
 import Settings from "@/pages/Settings";
 import { useBusinessMode } from "@/contexts/BusinessModeContext";
@@ -43,6 +44,7 @@ function AppRoutes() {
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/sales" component={Sales} />
           <Route path="/inventory" component={Inventory} />
+          <Route path="/customers" component={Customers} />
           <Route path="/reports" component={Reports} />
           <Route path="/settings" component={Settings} />
         </>

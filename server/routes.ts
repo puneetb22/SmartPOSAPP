@@ -154,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/customers', isAuthenticated, async (req, res) => {
+  app.post('/api/customers', async (req, res) => {
     try {
       const validatedData = insertCustomerSchema.parse(req.body);
       const customer = await storage.createCustomer(validatedData);
@@ -162,6 +162,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating customer:", error);
       res.status(500).json({ message: "Failed to create customer" });
+    }
+  });
+
+  app.patch('/api/customers/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertCustomerSchema.partial().parse(req.body);
+      const customer = await storage.updateCustomer(id, validatedData);
+      res.json(customer);
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      res.status(500).json({ message: "Failed to update customer" });
+    }
+  });
+
+  // Stock management routes
+  app.get('/api/stock/batches', async (req, res) => {
+    try {
+      const productId = req.query.productId ? parseInt(req.query.productId as string) : undefined;
+      const batches = await storage.getStockBatches(productId);
+      res.json(batches);
+    } catch (error) {
+      console.error("Error fetching stock batches:", error);
+      res.status(500).json({ message: "Failed to fetch stock batches" });
+    }
+  });
+
+  app.post('/api/stock/batches', async (req, res) => {
+    try {
+      const batch = await storage.createStockBatch(req.body);
+      res.json(batch);
+    } catch (error) {
+      console.error("Error creating stock batch:", error);
+      res.status(500).json({ message: "Failed to create stock batch" });
+    }
+  });
+
+  app.get('/api/stock/expiring/:days', async (req, res) => {
+    try {
+      const days = parseInt(req.params.days);
+      const expiringProducts = await storage.getExpiringProducts(days);
+      res.json(expiringProducts);
+    } catch (error) {
+      console.error("Error fetching expiring products:", error);
+      res.status(500).json({ message: "Failed to fetch expiring products" });
+    }
+  });
+
+  // Categories route
+  app.post('/api/categories', async (req, res) => {
+    try {
+      const category = await storage.createCategory(req.body);
+      res.json(category);
+    } catch (error) {
+      console.error("Error creating category:", error);
+      res.status(500).json({ message: "Failed to create category" });
     }
   });
 
