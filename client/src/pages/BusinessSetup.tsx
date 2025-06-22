@@ -46,7 +46,10 @@ export default function BusinessSetup() {
 
   const setupMutation = useMutation({
     mutationFn: async (data: BusinessConfigForm) => {
-      await apiRequest('POST', '/api/business-config', data);
+      const response = await apiRequest('POST', '/api/business-config', data);
+      // Also save to localStorage for offline access
+      localStorage.setItem('pos_business_config', JSON.stringify(response));
+      return response;
     },
     onSuccess: () => {
       toast({

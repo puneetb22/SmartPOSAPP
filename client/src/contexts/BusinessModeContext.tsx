@@ -37,13 +37,24 @@ export function BusinessModeProvider({ children }: BusinessModeProviderProps) {
         // Try to fetch from server first
         const response = await fetch('/api/business-config');
         if (response.ok) {
-          return await response.json();
+          const data = await response.json();
+          return data;
         }
       } catch (error) {
         console.log('Server unavailable, using offline data');
       }
+      
       // Fallback to offline storage
-      return offlineStorage.getBusinessConfig();
+      const savedConfig = localStorage.getItem('pos_business_config');
+      if (savedConfig) {
+        try {
+          return JSON.parse(savedConfig);
+        } catch (error) {
+          console.error('Failed to parse saved business config:', error);
+        }
+      }
+      
+      return null;
     },
   });
 

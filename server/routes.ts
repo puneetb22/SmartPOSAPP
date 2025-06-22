@@ -39,10 +39,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/business-config', async (req: any, res) => {
     try {
       const validatedData = insertBusinessConfigSchema.parse(req.body);
-      // Add default user ID for offline mode
+      // Add default user ID for offline mode and mark as configured
       const configWithDefaults = {
         ...validatedData,
-        userId: 'offline_user'
+        userId: 'offline_user',
+        isConfigured: true,
+        factoryResetProtection: true
       };
       const config = await storage.createBusinessConfig(configWithDefaults);
       res.json(config);
