@@ -7,6 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/hooks/useI18n';
 import { useBusinessMode } from '@/contexts/BusinessModeContext';
@@ -16,6 +21,7 @@ import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { KeyboardShortcutsOverlay } from '@/components/KeyboardShortcutsOverlay';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { demoProducts } from '@/lib/demoData';
+import { apiRequest } from '@/lib/queryClient';
 import { 
   ShoppingCart, 
   Plus, 
@@ -28,7 +34,8 @@ import {
   Trash2,
   User,
   Check,
-  ChevronsUpDown
+  ChevronsUpDown,
+  UserPlus
 } from 'lucide-react';
 
 interface CartItem {
@@ -43,7 +50,18 @@ interface Customer {
   id?: number;
   name: string;
   phone: string;
+  email?: string;
+  address?: string;
 }
+
+const quickCustomerSchema = z.object({
+  name: z.string().min(1, 'Customer name is required'),
+  phone: z.string().min(10, 'Valid phone number is required'),
+  email: z.string().email('Valid email is required').optional().or(z.literal('')),
+  address: z.string().optional(),
+});
+
+type QuickCustomerForm = z.infer<typeof quickCustomerSchema>;
 
 function Sales() {
   const { t } = useI18n();
@@ -56,6 +74,7 @@ function Sales() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [showAddCustomer, setShowAddCustomer] = useState(false);
   
   // Fetch customers for search
   const { data: customers = [] } = useQuery({
@@ -150,6 +169,50 @@ function Sales() {
     setDiscountPercent(0);
   };
 
+  // Quick Add Customer Form
+  const customerForm = useForm<QuickCustomerForm>({
+    resolver: zodResolver(quickCustomerSchema),
+    defaultValues: {
+      name: '',
+      phone: '',
+      email: '',
+      address: '',
+    },
+  });
+
+  const addCustomerMutation = useMutation({
+    mutationFn: async (data: QuickCustomerForm) => {
+      try {
+        return await apiRequest('POST', '/api/customers', data);
+      } catch (error) {
+        // Fallback to local storage
+        const localCustomers = JSON.parse(localStorage.getItem('pos_customers') || '[]');
+        const newCustomer = { 
+          ...data, 
+          id: Date.now(), 
+          createdAt: new Date().toISOString(),
+        };
+        localCustomers.push(newCustomer);
+        localStorage.setItem('pos_customers', JSON.stringify(localCustomers));
+        return newCustomer;
+      }
+    },
+    onSuccess: (newCustomer) => {
+      toast({ title: 'Success', description: 'Customer added successfully' });
+      setSelectedCustomer(newCustomer);
+      customerForm.reset();
+      setShowAddCustomer(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/customers'] });
+    },
+    onError: () => {
+      toast({ title: 'Error', description: 'Failed to add customer', variant: 'destructive' });
+    },
+  });
+
+  const onSubmitCustomer = (data: QuickCustomerForm) => {
+    addCustomerMutation.mutate(data);
+  };
+
   // Customer Search Component
   function CustomerSearch({ selectedCustomer, onCustomerSelect }: {
     selectedCustomer: Customer | null;
@@ -162,6 +225,8 @@ function Sales() {
       customer.name.toLowerCase().includes(searchValue.toLowerCase()) ||
       customer.phone.includes(searchValue)
     );
+
+    const hasResults = filteredCustomers.length > 0;
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -187,7 +252,25 @@ function Sales() {
               onValueChange={setSearchValue}
             />
             <CommandList>
-              <CommandEmpty>No customers found.</CommandEmpty>
+              <CommandEmpty>
+                <div className="py-4 text-center">
+                  <p className="text-sm text-gray-500 mb-2">No customers found.</p>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setOpen(false);
+                      setShowAddCustomer(true);
+                      if (searchValue) {
+                        customerForm.setValue('name', searchValue);
+                      }
+                    }}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Add New Customer
+                  </Button>
+                </div>
+              </CommandEmpty>
               <CommandGroup>
                 <CommandItem
                   value="walk-in"
@@ -223,6 +306,22 @@ function Sales() {
                     </div>
                   </CommandItem>
                 ))}
+                {hasResults && (
+                  <CommandItem
+                    value="add-new"
+                    onSelect={() => {
+                      setOpen(false);
+                      setShowAddCustomer(true);
+                      if (searchValue) {
+                        customerForm.setValue('name', searchValue);
+                      }
+                    }}
+                    className="border-t"
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Add New Customer
+                  </CommandItem>
+                )}
               </CommandGroup>
             </CommandList>
           </Command>
@@ -550,6 +649,86 @@ function Sales() {
           </div>
         </main>
       </div>
+
+      {/* Quick Add Customer Dialog */}
+      <Dialog open={showAddCustomer} onOpenChange={setShowAddCustomer}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+          </DialogHeader>
+          <Form {...customerForm}>
+            <form onSubmit={customerForm.handleSubmit(onSubmitCustomer)} className="space-y-4">
+              <FormField
+                control={customerForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Customer Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter customer name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={customerForm.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter phone number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={customerForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email (Optional)</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" placeholder="Enter email address" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={customerForm.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address (Optional)</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter address" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowAddCustomer(false);
+                    customerForm.reset();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={addCustomerMutation.isPending}>
+                  {addCustomerMutation.isPending ? 'Adding...' : 'Add Customer'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
       <FloatingActionButton />
       
