@@ -122,6 +122,7 @@ Changelog:
 - June 22, 2025. Fixed database schema queries and completed API routes for inventory and customers
 - June 22, 2025. Updated sales page to include customer search functionality instead of defaulting to walk-in customer
 - June 22, 2025. Added quick customer creation popup form in sales page for customers that don't exist
+- June 22, 2025. Made prescription tab conditional - only shows when business mode is pharmacy
 ```
 
 ## User Preferences
