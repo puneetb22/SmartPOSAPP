@@ -12,6 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/hooks/useI18n';
 import { useBusinessMode } from '@/contexts/BusinessModeContext';
@@ -22,6 +24,7 @@ import { KeyboardShortcutsOverlay } from '@/components/KeyboardShortcutsOverlay'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { demoProducts } from '@/lib/demoData';
 import { apiRequest } from '@/lib/queryClient';
+import { Invoice } from '@/components/Invoice';
 import { 
   ShoppingCart, 
   Plus, 
@@ -75,6 +78,9 @@ function Sales() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showAddCustomer, setShowAddCustomer] = useState(false);
+  const [lastSale, setLastSale] = useState<any>(null);
+  const [showInvoice, setShowInvoice] = useState(false);
+  const invoiceRef = useRef<HTMLDivElement>(null);
   
   // Fetch customers for search
   const { data: customers = [] } = useQuery({
@@ -727,6 +733,32 @@ function Sales() {
               </div>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Invoice Modal */}
+      <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Invoice Generated</DialogTitle>
+          </DialogHeader>
+          {lastSale && businessConfig && (
+            <>
+              <Invoice 
+                ref={invoiceRef}
+                sale={lastSale}
+                businessConfig={businessConfig}
+              />
+              <div className="flex justify-end space-x-2 mt-4">
+                <Button variant="outline" onClick={() => setShowInvoice(false)}>
+                  Close
+                </Button>
+                <Button onClick={handlePrint}>
+                  Print Invoice
+                </Button>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
 

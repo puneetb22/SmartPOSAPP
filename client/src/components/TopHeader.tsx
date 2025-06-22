@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useI18n } from '@/hooks/useI18n';
+import { useBusinessMode } from '@/contexts/BusinessModeContext';
 import { useOffline } from '@/contexts/OfflineContext';
 import { Menu, Plus, Tv, Bell, Clock, Calendar, User, LogOut } from 'lucide-react';
 import { SyncStatus } from '@/components/SyncStatus';
@@ -14,6 +15,7 @@ interface TopHeaderProps {
 
 export function TopHeader({ title, onMenuToggle }: TopHeaderProps) {
   const { t } = useI18n();
+  const { businessConfig } = useBusinessMode();
   const { user, logout } = useOffline();
   const [currentTime, setCurrentTime] = useState(new Date());
 

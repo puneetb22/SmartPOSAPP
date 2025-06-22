@@ -123,6 +123,8 @@ Changelog:
 - June 22, 2025. Updated sales page to include customer search functionality instead of defaulting to walk-in customer
 - June 22, 2025. Added quick customer creation popup form in sales page for customers that don't exist
 - June 22, 2025. Made prescription tab conditional - only shows when business mode is pharmacy
+- June 22, 2025. Updated app title to show business name from configuration instead of "Maharashtra POS"
+- June 22, 2025. Added invoice generation system with print functionality after completing sales
 ```
 
 ## User Preferences

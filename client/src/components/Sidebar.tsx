@@ -64,7 +64,9 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
       <div className={`p-4 bg-primary text-white ${getModeColor(businessMode)}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-medium text-lg">{t('app.title')}</h1>
+            <h1 className="font-medium text-lg">
+              {businessConfig?.businessName || t('app.title')}
+            </h1>
             <p className="text-sm opacity-90">
               {businessMode ? t(`businessMode.${businessMode}`) : t('businessMode.notConfigured')}
             </p>
