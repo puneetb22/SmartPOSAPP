@@ -1,0 +1,149 @@
+Here is the rewritten and enhanced prompt with additional features and standards typically used in POS systems for Maharashtra, India, in 2025, especially for agri, pharmacy, and general retail sectors:
+
+⸻
+
+Prompt for Replit
+Title: Build a GST-Compliant, Maharashtra-Standard Web-Based Point of Sale (POS) System with Node.js, Express & MySQL
+
+⸻
+
+Overview:
+Develop a web-based Point of Sale (POS) system using Node.js (v12.x) for Windows 7 compatibility, Express.js, and MySQL. The system must cater to small to mid-sized shops in Maharashtra, India, such as agri-product stores, pharmacies, and general retail stores, and follow local statutory compliance, GST rules, and retail POS standards in 2025.
+
+⸻
+
+✅ Key Features & Requirements
+
+⸻
+
+🔄 Core POS Functionalities
+	•	Inventory Management:
+	•	Add, update, delete products with:
+	•	Product category, HSN code, unit of measure (UOM), manufacturer.
+	•	Real-time stock tracking.
+	•	Batch-wise stock with:
+	•	Batch number, expiry date (for agri/pharma), purchase date.
+	•	FIFO-based stock deduction logic.
+	•	Set minimum stock thresholds with automated low stock alerts and reorder prompts.
+	•	Inventory inward/outward log.
+	•	Daily/weekly/monthly stock audit & variance reports.
+	•	Sales & Billing:
+	•	Easy-to-use invoice creation.
+	•	Real-time inventory deduction.
+	•	Apply discounts (bill-level or item-level).
+	•	Cash/Card/UPI split payments support.
+	•	Auto-rounding as per Indian currency standards.
+	•	Add customer data (name, mobile, address) for each sale.
+	•	GST Compliance (Maharashtra):
+	•	Each product to store HSN code and GST rate.
+	•	Invoices must show SGST + CGST breakdown based on applicable GST slabs (0%, 5%, 12%, 18%, 28%).
+	•	Tax-inclusive and tax-exclusive pricing support.
+	•	Invoice layout must include:
+	•	Business details with GSTIN, address.
+	•	Customer name/address (optional).
+	•	Product-wise: name, HSN, quantity, rate, tax %, tax amount.
+	•	SGST, CGST, total tax, and grand total.
+	•	Invoice number and date (auto-generated with sequential logic).
+	•	Conform to e-invoice format 2025 (if required).
+	•	Product Master Features:
+	•	Enable/disable product.
+	•	Print barcode/QR code support (optional).
+	•	Product photo/image field.
+	•	Product SKU generation logic.
+
+⸻
+
+🔐 User Authentication & Access Control
+	•	Basic login system using username/password.
+	•	Minimum two roles:
+	•	Admin: Full access
+	•	Cashier: Limited to billing and inventory view
+	•	Sessions and route-level protection.
+
+⸻
+
+💽 Database Integration
+	•	Use MySQL and connect using mysql2 package.
+	•	Store credentials in environment variables.
+	•	Provide a sample schema.sql with:
+	•	Product table (including HSN, GST %, batch, expiry)
+	•	Sales, Sale Items
+	•	Inventory log
+	•	Users
+	•	Settings (GST %, Shop Info, etc.)
+
+⸻
+
+🎨 Frontend
+	•	Built with HTML, CSS, JavaScript (Bootstrap allowed).
+	•	Responsive design for desktop/tablet use.
+	•	Easy-to-use UI optimized for small shop counters with keyboard navigation.
+	•	Invoice print-friendly view.
+	•	Fast POS-like layout (search by barcode, autocomplete product, etc.)
+
+⸻
+
+🌐 Browser Compatibility
+	•	Must work with:
+	•	Chrome 80+
+	•	Firefox 75+
+	•	Edge 80+
+	•	Opera 70+
+
+⸻
+
+🖥️ Setup Instructions
+	•	Local setup must work on Windows 7.
+	•	Include:
+	•	Node.js 12.x installation steps
+	•	MySQL setup steps
+	•	Sample .env file format
+	•	SQL setup (schema.sql)
+	•	Commands to install Node dependencies and run the app
+	•	Everything bundled in a Replit project with clear folder structure and code comments.
+
+⸻
+
+📦 Bonus (Optional)
+	•	Provide script/instructions to package as a Windows Installer (.exe) with:
+	•	Embedded Node.js
+	•	Pre-configured MySQL (optional)
+	•	Dependencies bundled
+	•	Auto-launch desktop shortcut for cashier
+
+⸻
+
+🗂️ Project Structure (Suggested)
+
+pos-system/
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── models/
+│   └── app.js
+├── frontend/
+│   ├── views/
+│   ├── assets/
+│   └── index.html
+├── database/
+│   ├── schema.sql
+│   └── seed.sql
+├── .env
+├── package.json
+└── README.md
+
+
+⸻
+
+✅ Outcome
+
+A fully functional, locally deployable POS system that:
+	•	Is GST-compliant
+	•	Supports batch-wise stock
+	•	Works in Maharashtra retail environments
+	•	Is compatible with Windows 7
+	•	Can handle core shop operations reliably in 2025
+
+⸻
+
+Would you like me to generate sample backend/frontend code and SQL schema for this prompt next?
