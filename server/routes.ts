@@ -73,8 +73,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Product routes
-  app.get('/api/products', isAuthenticated, async (req, res) => {
+  // Product routes (no auth required for offline mode)
+  app.get('/api/products', async (req, res) => {
     try {
       const products = await storage.getProducts();
       res.json(products);
@@ -84,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/products/search', isAuthenticated, async (req, res) => {
+  app.get('/api/products/search', async (req, res) => {
     try {
       const { q } = req.query;
       if (!q || typeof q !== 'string') {
@@ -99,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/products/low-stock', isAuthenticated, async (req, res) => {
+  app.get('/api/products/low-stock', async (req, res) => {
     try {
       const products = await storage.getLowStockProducts();
       res.json(products);
@@ -109,7 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/products', isAuthenticated, async (req: any, res) => {
+  app.post('/api/products', async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
@@ -127,8 +127,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Category routes
-  app.get('/api/categories', isAuthenticated, async (req, res) => {
+  // Category routes (no auth required for offline mode)
+  app.get('/api/categories', async (req, res) => {
     try {
       const categories = await storage.getCategories();
       res.json(categories);
@@ -138,8 +138,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Customer routes
-  app.get('/api/customers', isAuthenticated, async (req, res) => {
+  // Customer routes (no auth required for offline mode)
+  app.get('/api/customers', async (req, res) => {
     try {
       const customers = await storage.getCustomers();
       res.json(customers);
@@ -160,8 +160,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sales routes
-  app.get('/api/sales', isAuthenticated, async (req, res) => {
+  // Sales routes (no auth required for offline mode)
+  app.get('/api/sales', async (req, res) => {
     try {
       const { limit } = req.query;
       const sales = await storage.getSales(limit ? parseInt(limit as string) : undefined);
@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/sales', isAuthenticated, async (req: any, res) => {
+  app.post('/api/sales', async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
@@ -214,8 +214,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Statistics routes
-  app.get('/api/stats/today', isAuthenticated, async (req, res) => {
+  // Statistics routes (no auth required for offline mode)
+  app.get('/api/stats/today', async (req, res) => {
     try {
       const stats = await storage.getTodaysSales();
       res.json(stats);
@@ -225,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/stats/top-products', isAuthenticated, async (req, res) => {
+  app.get('/api/stats/top-products', async (req, res) => {
     try {
       const { limit = 5 } = req.query;
       const products = await storage.getTopSellingProducts(parseInt(limit as string));
