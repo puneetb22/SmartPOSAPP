@@ -120,6 +120,7 @@ Changelog:
 - June 22, 2025. Added comprehensive customer management with analytics and contact details  
 - June 22, 2025. Created database migration script for schema updates on internal Docker database
 - June 22, 2025. Fixed database schema queries and completed API routes for inventory and customers
+- June 22, 2025. Updated sales page to include customer search functionality instead of defaulting to walk-in customer
 ```
 
 ## User Preferences

@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/hooks/useI18n';
 import { useBusinessMode } from '@/contexts/BusinessModeContext';
@@ -24,7 +26,9 @@ import {
   Banknote,
   Smartphone,
   Trash2,
-  User
+  User,
+  Check,
+  ChevronsUpDown
 } from 'lucide-react';
 
 interface CartItem {
@@ -52,6 +56,12 @@ function Sales() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  
+  // Fetch customers for search
+  const { data: customers = [] } = useQuery({
+    queryKey: ['/api/customers'],
+    retry: false,
+  });
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'upi' | 'mixed'>('cash');
   const [discountPercent, setDiscountPercent] = useState(0);
 
@@ -139,6 +149,87 @@ function Sales() {
     setSelectedCustomer(null);
     setDiscountPercent(0);
   };
+
+  // Customer Search Component
+  function CustomerSearch({ selectedCustomer, onCustomerSelect }: {
+    selectedCustomer: Customer | null;
+    onCustomerSelect: (customer: Customer | null) => void;
+  }) {
+    const [open, setOpen] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+
+    const filteredCustomers = customers.filter(customer =>
+      customer.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      customer.phone.includes(searchValue)
+    );
+
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
+          >
+            {selectedCustomer 
+              ? `${selectedCustomer.name} (${selectedCustomer.phone})`
+              : "Search customer or walk-in..."
+            }
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0">
+          <Command>
+            <CommandInput 
+              placeholder="Search customers..." 
+              value={searchValue}
+              onValueChange={setSearchValue}
+            />
+            <CommandList>
+              <CommandEmpty>No customers found.</CommandEmpty>
+              <CommandGroup>
+                <CommandItem
+                  value="walk-in"
+                  onSelect={() => {
+                    onCustomerSelect(null);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={`mr-2 h-4 w-4 ${
+                      selectedCustomer === null ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                  Walk-in Customer
+                </CommandItem>
+                {filteredCustomers.map((customer) => (
+                  <CommandItem
+                    key={customer.id}
+                    value={`${customer.name}-${customer.phone}`}
+                    onSelect={() => {
+                      onCustomerSelect(customer);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={`mr-2 h-4 w-4 ${
+                        selectedCustomer?.id === customer.id ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                    <div className="flex flex-col">
+                      <span>{customer.name}</span>
+                      <span className="text-xs text-gray-500">{customer.phone}</span>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    );
+  }
 
   const processSale = useMutation({
     mutationFn: async () => {
@@ -306,9 +397,10 @@ function Sales() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full justify-start">
-                {selectedCustomer ? selectedCustomer.name : 'Walk-in Customer'}
-              </Button>
+              <CustomerSearch 
+                selectedCustomer={selectedCustomer}
+                onCustomerSelect={setSelectedCustomer}
+              />
             </CardContent>
           </Card>
 

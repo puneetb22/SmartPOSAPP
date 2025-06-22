@@ -210,6 +210,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/stock/expiring', async (req, res) => {
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string) : 30;
+      const expiringProducts = await storage.getExpiringProducts(days);
+      res.json(expiringProducts);
+    } catch (error) {
+      console.error("Error fetching expiring products:", error);
+      res.status(500).json({ message: "Failed to fetch expiring products" });
+    }
+  });
+
   // Categories route
   app.post('/api/categories', async (req, res) => {
     try {

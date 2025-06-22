@@ -118,8 +118,8 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
             return (
               <li key={item.path}>
                 <Link href={item.path}>
-                  <a className={`
-                    flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors
+                  <div className={`
+                    flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors cursor-pointer
                     ${isActive 
                       ? 'bg-primary text-white' 
                       : 'text-gray-700 hover:bg-gray-100'
@@ -132,7 +132,7 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                         {item.shortcut}
                       </span>
                     )}
-                  </a>
+                  </div>
                 </Link>
               </li>
             );

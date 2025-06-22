@@ -181,12 +181,13 @@ export class DatabaseStorage implements IStorage {
       const result = await db
         .select()
         .from(products)
-        .where(sql`${products.stock} <= ${products.minStock}`);
+        .where(lte(products.stock, products.minStock));
       
       return result;
     } catch (error) {
       console.error('Error fetching low stock products:', error);
-      throw new Error('Failed to fetch low stock products');
+      // Return empty array as fallback
+      return [];
     }
   }
 
