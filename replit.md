@@ -101,10 +101,19 @@ Each mode provides specialized features while sharing core POS functionality.
 - `REPL_ID`: Replit environment identifier
 - `NODE_ENV`: Environment mode (development/production)
 
+## Local Development Setup
+
+This project can be run locally in VS Code. See `SETUP.md` for detailed instructions on:
+- Installing prerequisites (Node.js, PostgreSQL, VS Code extensions)
+- Environment configuration
+- Database setup and migrations
+- Development workflow and debugging
+
 ## Changelog
 ```
 Changelog:
-- June 22, 2025. Initial setup
+- June 22, 2025. Initial setup and authentication debugging
+- June 22, 2025. Fixed business setup flow and local development guide
 ```
 
 ## User Preferences
