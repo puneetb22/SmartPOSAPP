@@ -51,6 +51,7 @@ const englishTranslations = {
   
   // Actions
   'actions.quickSale': 'Quick Sale',
+  'actions.logout': 'Logout',
   'actions.newSale': 'New Sale',
   'actions.addProduct': 'Add Product',
   'actions.search': 'Search',

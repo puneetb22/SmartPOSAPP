@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { useAuth } from '@/hooks/useAuth';
+import { useOffline } from '@/contexts/OfflineContext';
 import { useBusinessMode } from '@/contexts/BusinessModeContext';
 import { useI18n } from '@/hooks/useI18n';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
   const [location] = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useOffline();
   const { businessMode } = useBusinessMode();
   const { language, setLanguage, t } = useI18n();
 
@@ -89,17 +89,17 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
         <div className="flex items-center space-x-3">
           <Avatar className="w-10 h-10">
             <AvatarImage 
-              src={user?.profileImageUrl} 
-              alt={user?.firstName || 'User'} 
+              src="" 
+              alt={user?.name || 'User'} 
               className="object-cover"
             />
             <AvatarFallback>
-              {user?.firstName?.[0] || 'U'}
+              {user?.name?.[0] || 'U'}
             </AvatarFallback>
           </Avatar>
           <div>
             <p className="font-medium text-sm">
-              {user?.firstName} {user?.lastName}
+              {user?.name || 'User'}
             </p>
             <p className="text-xs text-gray-600">
               {user?.role ? t(`role.${user.role}`) : t('role.unknown')}
@@ -145,13 +145,10 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
         <Button 
           variant="destructive" 
           className="w-full"
-          onClick={() => window.location.href = '/api/logout'}
+          onClick={logout}
         >
           <LogOut className="w-4 h-4 mr-2" />
-          {t('menu.logout')}
-          <span className="ml-auto text-xs bg-red-600 px-2 py-1 rounded font-mono">
-            Ctrl+L
-          </span>
+          {t('actions.logout')}
         </Button>
       </div>
 

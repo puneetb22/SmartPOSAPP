@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,11 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/hooks/useI18n';
 import { useBusinessMode } from '@/contexts/BusinessModeContext';
+import { Sidebar } from '@/components/Sidebar';
+import { TopHeader } from '@/components/TopHeader';
+import { FloatingActionButton } from '@/components/FloatingActionButton';
+import { KeyboardShortcutsOverlay } from '@/components/KeyboardShortcutsOverlay';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { demoProducts } from '@/lib/demoData';
 import { 
   ShoppingCart, 
@@ -36,11 +41,13 @@ interface Customer {
   phone: string;
 }
 
-export default function Sales() {
+function Sales() {
   const { t } = useI18n();
   const { toast } = useToast();
   const { businessConfig } = useBusinessMode();
   const queryClient = useQueryClient();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
   
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -203,12 +210,34 @@ export default function Sales() {
     processSale.mutate();
   };
 
+  useKeyboardShortcuts({
+    onHelp: () => setShowShortcuts(true),
+    onClearCart: clearCart,
+    onPayment: handleSale,
+  });
+
+  useKeyboardShortcuts({
+    onHelp: () => setShowShortcuts(true),
+    onClearCart: clearCart,
+    onPayment: handleSale,
+  });
+
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopHeader 
+          title={t('menu.newSale')} 
+          onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
         
-        {/* Products Section */}
-        <div className="lg:col-span-2">
+        <main className="flex-1 p-4 overflow-y-auto">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Products Section */}
+              <div className="lg:col-span-2">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -265,8 +294,8 @@ export default function Sales() {
           </Card>
         </div>
 
-        {/* Cart & Billing Section */}
-        <div className="space-y-4">
+              {/* Cart & Billing Section */}
+              <div className="space-y-4">
           
           {/* Customer Selection */}
           <Card>
@@ -424,8 +453,20 @@ export default function Sales() {
               </CardContent>
             </Card>
           )}
-        </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
+
+      <FloatingActionButton />
+      
+      <KeyboardShortcutsOverlay 
+        isOpen={showShortcuts} 
+        onClose={() => setShowShortcuts(false)} 
+      />
     </div>
   );
 }
+
+export default Sales;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useI18n } from '@/hooks/useI18n';
@@ -18,12 +18,12 @@ export function TopHeader({ title, onMenuToggle }: TopHeaderProps) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute
-  useState(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
     return () => clearInterval(interval);
-  });
+  }, []);
 
   const formatDateTime = (date: Date) => {
     return date.toLocaleDateString('en-IN', {

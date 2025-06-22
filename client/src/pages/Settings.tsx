@@ -14,6 +14,11 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/hooks/useI18n';
 import { useBusinessMode } from '@/contexts/BusinessModeContext';
+import { Sidebar } from '@/components/Sidebar';
+import { TopHeader } from '@/components/TopHeader';
+import { FloatingActionButton } from '@/components/FloatingActionButton';
+import { KeyboardShortcutsOverlay } from '@/components/KeyboardShortcutsOverlay';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { apiRequest } from '@/lib/queryClient';
 import { Store, User, Database, Wifi, WifiOff } from 'lucide-react';
 
@@ -34,6 +39,8 @@ export default function Settings() {
   const { businessConfig } = useBusinessMode();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('business');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   const form = useForm<BusinessConfigForm>({
     resolver: zodResolver(businessConfigSchema),
@@ -100,8 +107,26 @@ export default function Settings() {
     });
   };
 
+  useKeyboardShortcuts({
+    onHelp: () => setShowShortcuts(true),
+  });
+
+  useKeyboardShortcuts({
+    onHelp: () => setShowShortcuts(true),
+  });
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopHeader 
+          title="Settings" 
+          onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
+        
+        <main className="flex-1 p-6 overflow-y-auto">
+          <div className="max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <Store className="w-6 h-6" />
         <h1 className="text-2xl font-bold">Settings</h1>
@@ -321,6 +346,16 @@ export default function Settings() {
           </Card>
         </TabsContent>
       </Tabs>
+          </div>
+        </main>
+      </div>
+
+      <FloatingActionButton />
+      
+      <KeyboardShortcutsOverlay 
+        isOpen={showShortcuts} 
+        onClose={() => setShowShortcuts(false)} 
+      />
     </div>
   );
 }

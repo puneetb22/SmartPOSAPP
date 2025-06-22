@@ -28,11 +28,14 @@ export function useOfflineStorage() {
 
   useEffect(() => {
     const handleOnline = () => {
-      setSyncStatus(prev => ({ ...prev, isOnline: true }));
-      // Auto-sync when coming online
-      if (syncStatus.pendingSyncs > 0) {
-        triggerSync();
-      }
+      setSyncStatus(prev => {
+        const newStatus = { ...prev, isOnline: true };
+        // Auto-sync when coming online if there are pending syncs
+        if (prev.pendingSyncs > 0) {
+          setTimeout(() => triggerSync(), 100);
+        }
+        return newStatus;
+      });
     };
 
     const handleOffline = () => {
@@ -46,7 +49,7 @@ export function useOfflineStorage() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [syncStatus.pendingSyncs]);
+  }, []);
 
   const addPendingSync = (data: any) => {
     const pendingData = JSON.parse(localStorage.getItem('pos_pending_data') || '[]');

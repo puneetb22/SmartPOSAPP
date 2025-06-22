@@ -39,7 +39,7 @@ function AppRoutes() {
         <Route path="/" component={BusinessSetup} />
       ) : (
         <>
-          <Route path="/" component={Sales} />
+          <Route path="/" component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/sales" component={Sales} />
           <Route path="/inventory" component={Inventory} />
