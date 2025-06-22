@@ -74,7 +74,7 @@ export function BusinessModeProvider({ children }: BusinessModeProviderProps) {
   const value: BusinessModeContextType = {
     businessMode,
     businessConfig,
-    isConfigured: businessConfig?.isConfigured || false,
+    isConfigured: businessConfig?.isConfigured === true,
     isLoading,
     setBusinessMode,
   };

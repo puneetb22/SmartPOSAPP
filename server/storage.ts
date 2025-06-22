@@ -109,7 +109,11 @@ export class DatabaseStorage implements IStorage {
 
   // Business configuration
   async getBusinessConfig(): Promise<BusinessConfig | undefined> {
-    const [config] = await db.select().from(businessConfig).limit(1);
+    const [config] = await db
+      .select()
+      .from(businessConfig)
+      .orderBy(desc(businessConfig.id))
+      .limit(1);
     return config;
   }
 
