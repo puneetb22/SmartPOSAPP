@@ -26,7 +26,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
   const [location] = useLocation();
   const { user, logout } = useOffline();
-  const { businessMode } = useBusinessMode();
+  const { businessMode, businessConfig } = useBusinessMode();
   const { language, setLanguage, t } = useI18n();
 
   const menuItems = [
